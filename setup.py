@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='freifunk-scripts',
@@ -12,6 +12,7 @@ setup(
     entry_points={
         'console_scripts': [
             'freifunk-nodes2zone = freifunk.nodes2zone:main',
+            'freifunk-generate-dashboard = freifunk.generate_dashboard:main',
         ],
     },
 )
