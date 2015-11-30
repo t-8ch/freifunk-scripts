@@ -84,7 +84,12 @@ def fetch_nodes(path_or_url):
             path_or_url.startswith('https://')):
 
         import requests
-        r = requests.get(path_or_url)
+        r = requests.get(path_or_url, headers={
+            'User-Agent': (
+                'https://github.com/t-8ch/'
+                'freifunk-scripts/blob/master/nodes2zone.py'
+            ),
+        })
         r.raise_for_status()
         return r.json()
 
