@@ -28,12 +28,14 @@ def iso_to_serial(iso):
 
 
 def format_record(id, subdomain, type, value):
+    id = id.rstrip('.')
+
     if subdomain is not None:
         subdomain = subdomain.lstrip('.')
         id = '{}.{}'.format(id, subdomain)
 
     value = str(value)
-    id = id.rstrip('.').encode('idna').lower()
+    id = id.encode('idna').decode('ascii').lower()
 
     if ';' in value:
         value = '"' + value + '"'
