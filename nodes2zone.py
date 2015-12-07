@@ -33,6 +33,7 @@ def format_record(id, subdomain, type, value):
         id = '{}.{}'.format(id, subdomain)
 
     value = str(value)
+    id = id.rstrip('.').encode('idna').lower()
 
     if ';' in value:
         value = '"' + value + '"'
