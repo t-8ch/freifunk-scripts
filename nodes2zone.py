@@ -3,9 +3,10 @@
 from __future__ import print_function, absolute_import
 
 import collections
-import datetime
 import ipaddress
 import textwrap
+
+import dateutil.parser
 
 # atomic
 
@@ -23,8 +24,7 @@ ZoneSettings = collections.namedtuple('ZoneSettings', [
 
 
 def iso_to_serial(iso):
-    return datetime.datetime.strptime(
-            iso, '%Y-%m-%dT%H:%M:%S').strftime('%s')
+    return dateutil.parser.parse(iso).strftime('%s')
 
 
 def format_record(id, subdomain, type, value):
@@ -82,7 +82,7 @@ def create_nodes_zone(output, nodes, zone_settings, subdomain_nets,
     write_zone(output, nodes_json, zone_settings, subdomain_nets, map_template)
 
 
-def fetch_nodes(path_or_url):
+def fetch_nodes(path_or_url, retries=2):
     if (path_or_url.startswith('http://') or
             path_or_url.startswith('https://')):
 
@@ -93,8 +93,12 @@ def fetch_nodes(path_or_url):
                 'freifunk-scripts/blob/master/nodes2zone.py'
             ),
         })
-        r.raise_for_status()
-        return r.json()
+        if r.ok:
+            return r.json()
+        elif retries > 1:
+            return fetch_nodes(path_or_url, retries - 1)
+        else:
+            r.raise_for_status()
 
     else:
         with open(path_or_url, 'r') as f:
